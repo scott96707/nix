@@ -1,0 +1,151 @@
+# User specific aliases and functions
+alias l='ls -ahl'
+alias weather='curl wttr.in/Lone+Tree+CO'
+alias rm-mdm='sh ~/bin/sunday/remove_electric_mdm.sh'
+alias cheat='curl cheat.sh/'
+
+# Argo
+alias ap="kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d; echo"
+# Helm
+alias h='helm'
+
+# Git aliases
+alias tags="git tag -l | sort -V"
+alias commit='git commit -Sa'
+
+# Subsoil aliases
+alias lint="black ~/bin/sunday/subsoil/src && isort ~/bin/sunday/subsoil/src && flake8 ~/bin/sunday/subsoil/src"
+
+# Telepresence
+alias tp="telepresence"
+
+# Cloudflare
+alias cf="cloudflared"
+
+cmctl() {
+    command cmctl \
+        $@ \
+        $([ -z "$KUBENS" ] || printf "--namespace=$KUBENS") \
+        $([ -z "$KUBECTX" ] || printf "--context=$KUBECTX")
+}
+
+kcc() {
+    # Switch current kube context to $1 if provided or prompt caller to
+    # select from the available contexts in the current kube config.
+    ctx=$([ -z "$1" ] && kubectl config get-contexts -o name | fzf || printf "$1")
+    [ -z "$ctx" ] || kubectl config use-context $ctx
+}
+
+kc() {
+    # Automatically apply the --context=$1 to each kubectl command. When
+    # no $1 is passed the env var is unset.
+    [ -z "$1" ] && unset KUBECTX || export KUBECTX="$1"
+}
+
+kn() {
+    # Automatically apply the --namespace=$1 to each kubectl
+    # command. When no $1 is passed the env var is unset.
+    [ -z "$1" ] && KUBENS="default" || export KUBENS=$1
+}
+
+kubectl() {
+    # Override the kubectl command to automatically apply flags based on
+    # environment variables.
+    command kubectl \
+            $([ -z "$KUBENS" ] || printf "--namespace=$KUBENS") \
+            $([ -z "$KUBECTX" ] || printf "--context=$KUBECTX") \
+            $@
+}
+
+helm() {
+    # Override the helm command to automatically apply flags based on
+    # environment variables.
+    command helm \
+            $([ -z "$KUBENS" ] || printf "--namespace=$KUBENS") \
+            $([ -z "$KUBECTX" ] || printf "--kube-context=$KUBECTX") \
+            $@
+}
+
+istioctl() {
+    # Override the istioctl command to automatically apply flags based on
+    # environment variables.
+    command istioctl \
+            $([ -z "$KUBENS" ] || printf "--namespace=$KUBENS") \
+            $([ -z "$KUBECTX" ] || printf "--context=$KUBECTX") \
+            $@
+}
+
+# Sunday Environments
+alias dev='kc dev && gcloud config set project dev-getsunday'
+alias stage='kc stage && gcloud config set project stage-getsunday'
+alias prod='kc prod && gcloud config set project prod-getsunday'
+
+# Kubectl aliases. Plugins can be installed with krew
+alias k='kubectl'
+alias kd='kubectl describe'
+alias kg='kubectl get'
+alias kgj='kubectl get jobs'
+alias kgp='kubectl get pods'
+alias ec='kubectl exec -it deploy/subsoil-celery-everythingelse -- /bin/bash'
+alias es='kubectl exec -it deploy/subsoil -- /bin/bash'
+
+# Terraform aliases
+alias t='terraform'
+alias tg='terragrunt'
+alias tgp='terragrunt plan-all'
+
+# Vim using FZF
+alias vimf='vim $(fzf --height 40%)'
+
+# Zsh aliases
+timezsh() {
+  shell=${1-$SHELL}
+  for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
+}
+
+get-queues() {
+    kubectl exec -i deploy/subsoil -- /bin/bash <<-'EOF' 2> /dev/null
+        apt-get install redis -y > /dev/null
+        printf "Redis Queues:\n"
+        redis-cli -h 10.129.228.180 -p 6379 <<-EOR
+            ECHO 'Analytic Queue'
+            llen 'analytic'
+            ECHO 'Avalara Queue'
+            llen 'avalara'
+            ECHO 'Celery Queue'
+            llen 'celery'
+            ECHO 'Events Queue'
+            llen 'events'
+            ECHO 'Health Queue'
+            llen 'health'
+            ECHO 'iDrive Queue'
+            llen 'idrive'
+            ECHO 'Joblisting Queue'
+            llen 'joblisting'
+            ECHO 'Klaviyo Queue'
+            llen 'klaviyo'
+            ECHO 'OTL Queue'
+            llen 'otl'
+            ECHO 're_auth Queue'
+            llen 're_auth'
+            ECHO 'Refunds Queue'
+            llen 'refunds'
+            ECHO 'Segment Queue'
+            llen 'segment'
+            ECHO 'Shipment Queue'
+            llen 'shipment'
+            ECHO 'Yotpo Queue'
+            llen 'yotpo'
+EOR
+EOF
+}
+
+
+pip() {
+  if [ "$*" = 'install' ]
+  then
+    command pip3 install --trusted-host files.pythonhosted.org --trusted-host pypi.org --trusted-host pypi.python.org "$@"
+  else
+    command pip3 "$@"
+  fi
+}
