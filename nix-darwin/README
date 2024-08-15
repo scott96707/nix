@@ -1,19 +1,2 @@
 Installation
 
-To install, clone this repo to ~/.config/nixfiles
-
-   git clone https://github.com/mjfeller/nixfiles ~/.config/nixfiles
-
-There are several subdirectories:
-
-'home'        holds configuration used by home-mananger.
-'hosts'       holds top level entrypoints for host configuration for nixos,
-              nix-darwin, and home-manager.
-'overlays'    holds nixpkgs overlays for customized packages. Primarily for
-              personalized suckless utilities.
-system'       holds system configuration for nixos and nix-darwin.
-
-I am also a heavy user of emacs and manage my emacs configuration through a
-separate repository at https://github.com/mjfeller/emacs. I found that managing
-emacs through nix configuration was not practical and have thus kept it
-completely separate.
