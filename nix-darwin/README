@@ -1,2 +1,11 @@
 Installation
 
+Install Nix:
+curl -L https://nixos.org/nix/install | sh -s -- --daemon
+Verify Installation:
+nix --version
+
+Copy this repo
+mkdir -p ~/.config/ && cd ~/.config
+git clone https://github.com/scott96707/nix.git
+nix run nix-darwin  --extra-experimental-features "nix-command flakes" -- switch --flake ~/.config/nix-darwin
