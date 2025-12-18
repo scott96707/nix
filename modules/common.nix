@@ -30,13 +30,19 @@
     tcpdump
     tree
     unzip
-    vim
     wget
     wl-clipboard
   ];
 
   # --- SHELL & EDITOR ---
   programs.neovim.defaultEditor = true;
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+    viAlias = true;   # typing 'vi' opens neovim
+    vimAlias = true;  # typing 'vim' opens neovim
+  };
+
   nixpkgs.config.allowUnfree = true;
 
   # --- FONTS ---
