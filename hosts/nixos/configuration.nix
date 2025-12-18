@@ -141,10 +141,6 @@
     mesa 
     rclone
     vulkan-tools
-    
-    # Neovim plugins (Host specific config)
-    vimPlugins.nvim-treesitter.withAllGrammars 
-    vimPlugins.vim-nix
   ];
 
   # --- PROGRAMS ---

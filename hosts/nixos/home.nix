@@ -12,8 +12,6 @@
   };
 
   home.packages = with pkgs; [
-    git
-    firefox
     libreoffice
     mpv
     wezterm
@@ -32,7 +30,7 @@
   };
 
   home.shellAliases = {
-    hms = "home-manager switch -f ~/nixos-config/nixos/home.nix";
+    hms = "home-manager switch --flake ~/nixos-config/#home";
     rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config/#nixos";
     cleanup = "sudo nix-collect-garbage -d"; 
     sunvim = "sudo -E nvim"; 
@@ -84,11 +82,24 @@
   programs.git = {
     enable = true;
 
-    settings = {
-      user = {
-        name = "scott96707";
-        email = "scott96707@gmail.com";
-      };
+    # 1. Identity goes at the TOP level (not inside a settings block)
+    userName = "scott96707";
+    userEmail = "scott96707@gmail.com";
+
+    # 2. Aliases have their own specific option
+    aliases = {
+      co = "checkout";
+      ci = "commit";
+      st = "status";
+      br = "branch";
+      hist = "log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short";
+      type = "cat-file -t";
+      dump = "cat-file -p";
+    };
+
+    # 3. Everything else goes into 'extraConfig'
+    extraConfig = {
+      # Core settings
       init.defaultBranch = "main";
       pull.rebase = true;
       core.editor = "nvim";
@@ -96,35 +107,127 @@
       push.autoSetupRemote = true;
       safe.directory = "/home/home/nixos-config";
 
-      alias = {
-        co = "checkout";
-        ci = "commit";
-        st = "status";
-        br = "branch";
-        hist = "log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short";
-        type = "cat-file -t";
-        dump = "cat-file -p";
+      # Delta Configuration (Modern Diff)
+      core.pager = "delta";
+      interactive.diffFilter = "delta --color-only";
+      
+      delta = {
+        navigate = true;
+        line-numbers = true;
+        side-by-side = true;
+      };
+
+      merge = {
+        conflictstyle = "diff3";
+      };
+      diff = {
+        colorMoved = "default";
       };
     };
   };
 
-  # Git delta - Updates git diff to be modern
-  programs.delta = {
-    enable = true;
-    enableGitIntegration = true;
-      options = {
-        navigate = true;  # use n/N to jump between changes
-          line-numbers = true;
-        side-by-side = true;
-      };
-  };
+  programs.neovim = {
+  enable = true;
+  defaultEditor = true;
+  viAlias = true;
+  vimAlias = true;
 
-  programs.home-manager.enable = true;
+  # --- 1. PLUGINS (Replaces Lazy.nvim) ---
+  plugins = with pkgs.vimPlugins; [
+    
+    # Dependencies (Explicitly added to be safe)
+    plenary-nvim
+    nvim-web-devicons
+    nui-nvim
 
-  # Key for git ssh validation
-  programs.keychain = {
-    enable = true;
-    keys = [ "id_ed25519" ];
+    # Add Indent Blankline (Vertical Context Lines)
+    {
+      plugin = indent-blankline-nvim;
+      config = ''
+        require("ibl").setup({
+            scope = { enabled = true },  -- Highlight the current context
+            indent = { char = "│" },     -- Use a solid vertical bar
+        })
+      '';
+      type = "lua";
+    }
+    # Theme: Tokyo Night
+    {
+      plugin = tokyonight-nvim;
+      config = "vim.cmd[[colorscheme tokyonight]]";
+      type = "lua";
+    }
+
+    # File Explorer: Neo-tree
+    {
+      plugin = neo-tree-nvim;
+      config = ''
+        -- Keymaps for Neo-tree
+        vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { desc = 'Toggle Explorer' })
+      '';
+      type = "lua";
+    }
+
+    # Fuzzy Finder: Telescope
+    {
+      plugin = telescope-nvim;
+      config = ''
+        local builtin = require('telescope.builtin')
+        vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Find File' })
+        vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Find Text' })
+      '';
+      type = "lua";
+    }
+
+    # Status Line: Lualine
+    {
+      plugin = lualine-nvim;
+      config = "require('lualine').setup()";
+      type = "lua";
+    }
+
+    # Autopairs
+    {
+      plugin = nvim-autopairs;
+      config = "require('nvim-autopairs').setup({})";
+      type = "lua";
+    }
+
+    # Treesitter (Highlighting)
+    # Note: We use 'withAllGrammars' so you don't need to manually install parsers
+    {
+      plugin = nvim-treesitter.withAllGrammars;
+      config = ''
+        require('nvim-treesitter.configs').setup({
+          highlight = { enable = true },
+          indent = { enable = true },
+          auto_install = false, -- Nix handles this, so turn off auto-install
+        })
+      '';
+      type = "lua";
+    }
+  ];
+
+    # --- 2. GENERAL SETTINGS (Your vim.opt options) ---
+    extraLuaConfig = ''
+      vim.g.mapleader = " "
+      vim.opt.clipboard = "unnamedplus"
+
+      vim.opt.expandtab = true
+      vim.opt.shiftwidth = 2
+      vim.opt.tabstop = 2
+      vim.opt.softtabstop = 2
+      vim.opt.ignorecase = true
+      vim.opt.number = true
+      vim.opt.relativenumber = true
+      vim.opt.scrolloff = 8
+      vim.opt.smartcase = true
+      vim.opt.termguicolors = true
+      -- Highlights the specific column your cursor is on (can be noisy)
+      vim.opt.cursorcolumn = true
+      -- Clear search highlight on Esc
+      vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+    '';
   };
 
   programs.readline = {
@@ -136,4 +239,6 @@
       # character inputs
       '';
   };
+
+  programs.home-manager.enable = true;
 }
