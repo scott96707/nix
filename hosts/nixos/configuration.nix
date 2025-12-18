@@ -105,6 +105,10 @@
     serviceConfig = {
       User = "home"; 
       Group = "users";
+
+      # FIX: Force rclone to find the setuid 'fusermount' wrapper
+      Environment = "PATH=/run/wrappers/bin:/run/current-system/sw/bin";
+
       ExecStartPre = [
         "-/run/wrappers/bin/fusermount -uz /home/home/mnt/google_secret" 
         "${pkgs.coreutils}/bin/mkdir -p /home/home/mnt/google_secret"
