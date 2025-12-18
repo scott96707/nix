@@ -2,7 +2,7 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
       ./hardware-configuration.nix
       ../../modules/common.nix
     ];
@@ -106,7 +106,6 @@
       User = "home"; 
       Group = "users";
 
-      # FIX: Force rclone to find the setuid 'fusermount' wrapper
       Environment = "PATH=/run/wrappers/bin:/run/current-system/sw/bin";
 
       ExecStartPre = [
@@ -124,9 +123,6 @@
       RestartSec = "10s";
     };
   };
-  # Allow users to mount FUSE filesystems (Required for Rclone) so that google drive
-  # Won't throw errors on rebuilds
-  programs.fuse.userAllowOther = true;
 
   # --- USERS ---
   users.users.home = {
@@ -136,47 +132,20 @@
     packages = with pkgs; [];
   };
 
-  # --- HOME MANAGER ---
-  # This imports the home.nix that sits RIGHT NEXT to this file
-  home-manager.users.home = import ./home.nix;
 
   # --- HOST SPECIFIC PACKAGES ---
   # GUI Apps and heavy tools specific to this desktop
   environment.systemPackages = with pkgs; [
     efitools
     exiftool
-    firefox
-    libreoffice 
     mesa 
-    mpv 
     rclone
-    transmission_4 
-    transmission_4-qt
-    vlc 
     vulkan-tools
-    wezterm
-    yt-dlp
     
     # Neovim plugins (Host specific config)
     vimPlugins.nvim-treesitter.withAllGrammars 
     vimPlugins.vim-nix
   ];
-
-  environment.shellAliases = {
-    # UPDATED: Points to your new home git repo!
-    rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config/#nixos";
-    cleanup = "sudo nix-collect-garbage -d"; 
-    findpkg = "nix-locate --top-level"; 
-    sunvim = "sudo -E nvim"; 
-    pbcopy = "wl-copy";
-    pbpaste = "wl-paste";
-  };
-
-  environment.variables = {
-    EDITOR = "nvim";
-    VISUAL = "nvim";
-    BROWSER = "firefox";
-  };
 
   # --- PROGRAMS ---
   programs.steam = {
@@ -186,23 +155,16 @@
     localNetworkGameTransfers.openFirewall = true;
   };
   programs.gamemode.enable = true;
-  
-  programs.git = {
-    enable = true;
-    config = {
-      user = { 
-        name = "scott96707";
-        email = "scott96707@gmail.com";
-      };
-      # UPDATED: Allow git to trust your new home repo
-      safe.directory = "~/nixos-config";
-    };
-  };
 
   services.printing.enable = true;
   zramSwap.enable = true;
 
+  # Allow users to mount FUSE filesystems (Required for Rclone) so that google drive
+  # Won't throw errors on rebuilds
+  programs.fuse.userAllowOther = true;
+
   # --- SAMBA (File Sharing) ---
+  # aka SMB in the configuration
   services.samba = {
     enable = true;
     openFirewall = true;
@@ -236,6 +198,9 @@
     };
   };
 
+  # --- Avahi (Service Discover) ---
+  # Open-source Apple Bonjour aka Zeroconf
+  # Advertises Nixos on the network to Mac & PC
   services.avahi = {
     enable = true;
     nssmdns4 = true;
