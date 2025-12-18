@@ -161,10 +161,8 @@
   environment.shellAliases = {
     # UPDATED: Points to your new home git repo!
     rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config/#nixos";
-    
     cleanup = "sudo nix-collect-garbage -d"; 
     findpkg = "nix-locate --top-level"; 
-    vim = "nvim";
     sunvim = "sudo -E nvim"; 
     pbcopy = "wl-copy";
     pbpaste = "wl-paste";
