@@ -120,6 +120,9 @@
       RestartSec = "10s";
     };
   };
+  # Allow users to mount FUSE filesystems (Required for Rclone) so that google drive
+  # Won't throw errors on rebuilds
+  programs.fuse.userAllowOther = true;
 
   # --- USERS ---
   users.users.home = {
