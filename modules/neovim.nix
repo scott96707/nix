@@ -89,6 +89,8 @@
       vim.g.mapleader = " "
       vim.opt.clipboard = "unnamedplus"
 
+      -- Mouse clicks won't move cursor
+      vim.opt.mouse = ""
       vim.opt.expandtab = true
       vim.opt.shiftwidth = 2
       vim.opt.tabstop = 2

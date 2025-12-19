@@ -3,6 +3,8 @@
 {
   home.username = "home";
   home.homeDirectory = "/home/home";
+  # Leave stateVersion alone. It is auto generated and determines
+  # file structure format.
   home.stateVersion = "24.11";
 
   # Shared Modules
@@ -21,11 +23,16 @@
   };
 
   home.packages = with pkgs; [
+    gcc
+    iptables
     libreoffice
+    lsof
     mpv
-    yt-dlp
+    tcpdump
     transmission_4-qt
     vlc
+    wl-clipboard 
+    yt-dlp
   ];
 
   home.sessionVariables.MOZ_ENABLE_WAYLAND = "1";
@@ -38,7 +45,6 @@
   };
 
   home.shellAliases = {
-    hms = "home-manager switch --flake ~/nixos-config/#home";
     rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config/#nixos";
     cleanup = "sudo nix-collect-garbage -d"; 
     sunvim = "sudo -E nvim"; 

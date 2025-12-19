@@ -1,9 +1,10 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # --- NIX SETTINGS ---
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nix.settings.auto-optimise-store = true;
+  nix.settings.auto-optimise-store = lib.mkIf pkgs.stdenv.isLinux true;
+
   nix.gc = {
     automatic = true;
     dates = "weekly";
@@ -12,35 +13,20 @@
 
   # --- LOCALE & TIME (Defaults) ---
   time.timeZone = "America/Denver";
-  i18n.defaultLocale = "en_US.UTF-8";
+  i18n.defaultLocale = lib.mkIf pkgs.stdenv.isLinux "en_US.UTF-8";
 
   # --- CORE SYSTEM PACKAGES ---
-  # These are tools you need on every machine
   environment.systemPackages = with pkgs; [
     curl
-    gcc
     git
     htop
-    iptables
     jq
-    lsof
-    neovim
-    nixfmt-rfc-style
     ripgrep
-    tcpdump
     tree
     unzip
     wget
-    wl-clipboard
+    nixfmt-rfc-style
   ];
-
-  # --- SHELL & EDITOR ---
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    viAlias = true;   # typing 'vi' opens neovim
-    vimAlias = true;  # typing 'vim' opens neovim
-  };
 
   nixpkgs.config.allowUnfree = true;
 
@@ -53,5 +39,6 @@
     fira-code 
     fira-code-symbols
     nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
   ];
 }
