@@ -5,6 +5,10 @@
 
   programs.firefox = {
     enable = true;
+    # Only use the dummy package if we are on a Darwin (macOS) system
+    package = if pkgs.stdenv.isDarwin 
+              then pkgs.runCommand "firefox-dummy" {} "mkdir -p $out" 
+              else pkgs.firefox;
 
     profiles.default = {
       id = 0;
