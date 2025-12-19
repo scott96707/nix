@@ -4,6 +4,8 @@ This repository contains the **Infrastructure as Code (IaC)** for my personal wo
 
 It is designed to provide a reproducible **Engineering environment**, featuring a unified terminal experience, consistent keybindings, and automated system state management.
 
+Here's a good website to - [Learn Nix](https://docs.determinate.systems/guides/learn-nix/)
+
 ## 🏗 Architecture
 
 The configuration is organized into a modular structure:
