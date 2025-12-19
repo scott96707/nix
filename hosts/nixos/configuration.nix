@@ -30,6 +30,9 @@
     enable32Bit = true;
   };
   hardware.enableRedistributableFirmware = true;
+  services.xserver.videoDrivers = [ "amdgpu" ];
+  hardware.amdgpu.opencl.enable = true;
+
 
   # --- AUDIO FIXES (Wireplumber) ---
   environment.etc."wireplumber/main.lua.d/51-hdmi-priority.lua".text = ''
@@ -84,9 +87,9 @@
 
   # --- DESKTOP ENVIRONMENT ---
   services.xserver.enable = true;
-  services.displayManager.gdm.enable = true;
-  services.displayManager.gdm.wayland = true; 
-  services.desktopManager.gnome.enable = true;
+  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.displayManager.gdm.wayland = true; 
+  services.xserver.desktopManager.gnome.enable = true;
   services.xserver.xkb = { layout = "us"; variant = ""; };
 
   # Auto Login

@@ -39,8 +39,9 @@
         "browser.discovery.enabled" = false;     # Disable "Pocket" discovery
         
         # --- UX TWEAKS ---
-        "browser.shell.checkDefaultBrowser" = false;
         "browser.aboutConfig.showWarning" = false;
+        "browser.toolbars.bookmarks.visibility" = "always";
+        "browser.shell.checkDefaultBrowser" = false;
       };
     };
   };
