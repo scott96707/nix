@@ -13,8 +13,8 @@
 
     # SSH Signing (Works on both Mac and Linux)
     signing = {
-      key = "~/.ssh/id_ed25519.pub";
       signByDefault = true;
+      key = "~/.ssh/id_ed25519.pub";
     };
 
     # Common Aliases
@@ -37,6 +37,9 @@
       
       # Tell Git to use SSH for signing
       gpg.format = "ssh";
+
+      # Tell git to use a "Verified badge" on commits
+      commit.verbose = true;
 
       # Delta Configuration
       core.pager = "delta";
