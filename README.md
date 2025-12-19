@@ -42,11 +42,13 @@ The configuration is organized into a modular structure:
 
 ### 1. Install Nix
 
-The official installer creates the volume and users required for Nix.
+The [Determinate Nix Installer](https://github.com/DeterminateSystems/nix-installer) is the easiest installation method.
 
 ```bash
-sh <(curl -L [https://nixos.org/nix/install](https://nixos.org/nix/install))
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 
+# Check installation to verify installation
+nix --version
 ```
 
 ### 2. Enable Flakes
@@ -65,7 +67,7 @@ Clone this repo and apply the configuration. Nix-Darwin will take over system ma
 
 ```bash
 # Clone the repo
-git clone [https://github.com/scott96707/nixos-config](https://github.com/scott96707/nixos-config) ~/nixos-config
+git clone https://github.com/scott96707/nixos-config ~/nixos-config
 
 # Build and Switch
 # Note: "macbook" matches the name in flake.nix
@@ -97,7 +99,7 @@ cp /etc/nixos/hardware-configuration.nix ~/hardware-configuration.nix.bak
 
 ```bash
 # Clone the repo
-git clone [https://github.com/scott96707/nixos-config](https://github.com/scott96707/nixos-config) ~/nixos-config
+git clone https://github.com/scott96707/nixos-config ~/nixos-config
 
 # Copy your hardware config into the host directory
 cp /etc/nixos/hardware-configuration.nix ~/nixos-config/hosts/nixos/
