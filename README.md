@@ -1,4 +1,3 @@
-```markdown
 # Declarative Infrastructure (NixOS & macOS)
 
 This repository contains the **Infrastructure as Code (IaC)** for my personal workstations. It uses [Nix Flakes](https://nixos.wiki/wiki/Flakes) to share configurations, development tools, and dotfiles between a **NixOS Desktop** (Linux/AMD GPU) and a **MacBook** (macOS/Intel).
