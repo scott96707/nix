@@ -1,6 +1,8 @@
-{ pkgs, ... }: {
+{ pkgs, config, ... }: {
 
   # --- System Identity ---
+  system.primaryUser = "work_machine";
+
   users.users.work_machine = {
     name = "work_machine";
     home = "/Users/work_machine";
@@ -11,7 +13,54 @@
     git
     vim
     wget
+    mkalias
+    coreutils
   ];
+
+  # Script to pickup apps Nix installs and place them in /Applications/Nix so that they're easy to find
+  system.activationScripts.applications.text = let
+    env = pkgs.buildEnv {
+      name = "system-applications";
+      paths = config.environment.systemPackages;
+      pathsToLink = [ "/Applications" ];
+    };
+  in
+    pkgs.lib.mkForce ''
+      # 1. Clean up
+      echo "setting up /Applications..." >&2
+      rm -rf /Applications/Nix\ Apps
+      mkdir -p /Applications/Nix\ Apps
+
+      # 2. Link System Packages
+      # We iterate over the symlinks, resolve them to real paths using coreutils, and alias them.
+      for app in "${env}/Applications/"*; do
+        if [ -e "$app" ]; then
+          app_name=$(basename "$app")
+          # Resolve the real path so mkalias points to the actual binary, not a symlink
+          real_path=$(${pkgs.coreutils}/bin/readlink -f "$app")
+          
+          echo "Linking $app_name -> $real_path" >&2
+          ${pkgs.mkalias}/bin/mkalias "$real_path" "/Applications/Nix Apps/$app_name"
+        fi
+      done
+
+      # 3. Link Home Manager Packages
+      HM_APPS="/Users/work_machine/Applications/Home Manager Apps"
+      
+      if [ -d "$HM_APPS" ]; then
+         for app in "$HM_APPS/"*; do
+           if [ -e "$app" ]; then
+             app_name=$(basename "$app")
+             # Only alias if it doesn't already exist
+             if [ ! -e "/Applications/Nix Apps/$app_name" ]; then
+               real_path=$(${pkgs.coreutils}/bin/readlink -f "$app")
+               echo "Linking HM App: $app_name -> $real_path" >&2
+               ${pkgs.mkalias}/bin/mkalias "$real_path" "/Applications/Nix Apps/$app_name"
+             fi
+           fi
+         done
+      fi
+    '';
   
   # Must install homebrew manually on MacOS before using and modules:
   # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -23,9 +72,15 @@
     onActivation.upgrade = true;
 
     casks = [
+      # Firefox cannot be managed through Nix. If you try, it will overwrite your Firefox profile every time you rebuild
       "firefox"
       "rectangle"
     ];
+  };
+
+  home-manager = {
+    # This tells Home Manager: "If a file exists, back it up to 'filename.backup' and proceed"
+    backupFileExtension = "backup"; 
   };
 
   # --- macOS Defaults ---
@@ -79,13 +134,12 @@
   nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = "nix-command flakes";
   nix.optimise.automatic = true;
-  nix.optimise.user = "work_machine";
-
-  # This makes darwin-rebuild available in the standard path
-  services.nix-daemon.enable = true;
   
   # The GID fix for this specific Intel Mac
   ids.gids.nixbld = 350;
+
+  # Disable Nix management of Touch ID to avoid the /etc/pam.d symlink error
+  security.pam.services.sudo_local.touchIdAuth = false;
 
   security.sudo.extraConfig = ''
     # Allow work_machine to run darwin-rebuild without a password
