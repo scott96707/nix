@@ -14,9 +14,6 @@
 
   # --- System Packages ---
   environment.systemPackages = with pkgs; [
-    git
-    vim
-    wget
     mkalias
     coreutils
   ];
