@@ -1,5 +1,9 @@
 { pkgs, config, ... }: {
 
+  imports = [
+    ./../../modules/common.nix
+  ];
+
   # --- System Identity ---
   system.primaryUser = "work_machine";
 
@@ -132,7 +136,6 @@
 
   # --- Nix Core Settings ---
   nixpkgs.config.allowUnfree = true;
-  nix.settings.experimental-features = "nix-command flakes";
   nix.optimise.automatic = true;
   
   # The GID fix for this specific Intel Mac
