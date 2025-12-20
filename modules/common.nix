@@ -3,17 +3,20 @@
 {
   # --- NIX SETTINGS ---
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  
+  # Use 'nix.optimise.automatic' for macOS, 'auto-optimise-store' setting for Linux
+  nix.optimise.automatic = lib.mkIf pkgs.stdenv.isDarwin true;
   nix.settings.auto-optimise-store = lib.mkIf pkgs.stdenv.isLinux true;
 
+  # --- GARBAGE COLLECTION ---
+  # We use the // operator to merge the base config with OS-specific attributes
   nix.gc = {
     automatic = true;
-    dates = "weekly";
     options = "--delete-older-than 7d";
   };
 
-  # --- LOCALE & TIME (Defaults) ---
+  # --- LOCALE & TIME ---
   time.timeZone = "America/Denver";
-  i18n.defaultLocale = lib.mkIf pkgs.stdenv.isLinux "en_US.UTF-8";
 
   # --- CORE SYSTEM PACKAGES ---
   environment.systemPackages = with pkgs; [
