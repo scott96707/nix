@@ -26,6 +26,7 @@
     unzip
     wget
     nixfmt-rfc-style
+    silver-searcher
   ];
 
   nixpkgs.config.allowUnfree = true;

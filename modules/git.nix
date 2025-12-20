@@ -6,30 +6,20 @@
 
   programs.git = {
     enable = true;
-    
-    # User Identity
-    userName = "scott96707";
-    userEmail = "scott96707@gmail.com";
 
-    # SSH Signing (Works on both Mac and Linux)
-    signing = {
-      signByDefault = true;
-      key = "~/.ssh/id_ed25519.pub";
-    };
-
-    # Common Aliases
-    aliases = {
-      co = "checkout";
-      ci = "commit";
-      st = "status";
-      br = "branch";
-      hist = "log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short";
-      type = "cat-file -t";
-      dump = "cat-file -p";
-    };
-
-    # Core Configuration
-    extraConfig = {
+    settings = {
+      # Set user and email manually
+      # git config --global user.name "Your Name"
+      # git config --global user.email "you@example.com"
+      aliases = {
+        co = "checkout";
+        ci = "commit";
+        st = "status";
+        br = "branch";
+        hist = "log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short";
+        type = "cat-file -t";
+        dump = "cat-file -p";
+      };
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;
@@ -52,6 +42,12 @@
       
       merge.conflictstyle = "diff3";
       diff.colorMoved = "default";
+    };
+    
+    # SSH Signing (Works on both Mac and Linux)
+    signing = {
+      signByDefault = true;
+      key = "~/.ssh/id_ed25519.pub";
     };
   };
 }

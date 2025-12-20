@@ -1,14 +1,10 @@
-
 { pkgs, ... }:
 
 {
-
   programs.firefox = {
     enable = true;
-    # Only use the dummy package if we are on a Darwin (macOS) system
-    package = if pkgs.stdenv.isDarwin 
-              then pkgs.runCommand "firefox-dummy" {} "mkdir -p $out" 
-              else pkgs.firefox;
+    
+    package = pkgs.firefox;
 
     profiles.default = {
       id = 0;
@@ -31,12 +27,12 @@
         "app.shield.optoutstudies.enabled" = false;
 
         # --- AI & BLOAT OPT-OUT ---
-        "browser.ml.enable" = false;             # Disable local ML engine
-        "browser.ml.chat.enabled" = false;       # Disable Chatbot sidebar
-        "browser.ml.linkPreview.enabled" = false;# Disable AI link previews
+        "browser.ml.enable" = false;             
+        "browser.ml.chat.enabled" = false;       
+        "browser.ml.linkPreview.enabled" = false;
         "browser.tabs.groups.smart.enabled" = false; 
-        "extensions.getAddons.showPane" = false; # Hide "Recommendations"
-        "browser.discovery.enabled" = false;     # Disable "Pocket" discovery
+        "extensions.getAddons.showPane" = false; 
+        "browser.discovery.enabled" = false;     
         
         # --- UX TWEAKS ---
         "browser.aboutConfig.showWarning" = false;

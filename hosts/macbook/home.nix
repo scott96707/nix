@@ -11,7 +11,7 @@
     ./../../modules/git.nix
     ./../../modules/neovim.nix
     ./../../modules/shell.nix
-    ./../../modules/firefox.nix
+    ./../../modules/common.nix
   ];
 
   # macOS Specific session variables
@@ -23,7 +23,7 @@
   # macOS Specific Aliases
   home.shellAliases = {
     cleanup = "nix-collect-garbage -d";
-    rebuild = "darwin-rebuild switch --flake ~/nixos-config#macbook";
+    rebuild = "sudo darwin-rebuild switch --flake ~/nixos-config#macbook";
   };
 
   # Packages for the Mac
@@ -33,8 +33,6 @@
     jq
     htop
     tree
-#    vlc
-#    libreoffice
   ];
 
   programs.home-manager.enable = true;
