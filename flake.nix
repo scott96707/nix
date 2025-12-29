@@ -9,22 +9,28 @@
 
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.11";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, nix-darwin, ... }: {
+  outputs = inputs@{ self, nixpkgs, home-manager, nix-darwin, sops-nix, ... }: {
     
     # --- 1. LINUX PC (NixOS) ---
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [ 
-	./hosts/nixos/configuration.nix 
-	home-manager.nixosModules.home-manager
-	{
-	  home-manager.useGlobalPkgs = true;
+        ./hosts/nixos/configuration.nix 
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.home = import ./hosts/nixos/home.nix;
         }
+        sops-nix.nixosModules.sops
       ];
     };
 
@@ -35,13 +41,13 @@
       specialArgs = { inherit inputs; };
       modules = [
         ./hosts/macbook/configuration.nix
-        
         home-manager.darwinModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.work_machine = import ./hosts/macbook/home.nix;
         }
+        sops-nix.nixosModules.sops
       ];
     };
   };

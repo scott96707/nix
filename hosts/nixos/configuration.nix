@@ -139,10 +139,12 @@
   # --- HOST SPECIFIC PACKAGES ---
   # GUI Apps and heavy tools specific to this desktop
   environment.systemPackages = with pkgs; [
+    age
     efitools
     exiftool
     mesa 
     rclone
+    sops
     vulkan-tools
   ];
 
@@ -221,6 +223,31 @@
             <port>445</port>
           </service>
         </service-group>
+      '';
+    };
+  };
+
+  sops = {
+    defaultSopsFile = ../../secrets/secrets.yaml;
+    age.keyFile = "/var/lib/sops-nix/key.txt";
+    
+    secrets = {
+      git-email = {
+        owner = "home";
+      };
+      git-name = {
+        owner = "home";
+      };
+    };
+
+    # --- ADD THIS SECTION ---
+    templates."git-user.conf" = {
+      owner = "home";
+      # This looks like a standard git config file
+      content = ''
+        [user]
+          name = ${config.sops.placeholder.git-name}
+          email = ${config.sops.placeholder.git-email}
       '';
     };
   };

@@ -23,11 +23,13 @@
   };
 
   home.packages = with pkgs; [
+    age
     gcc
     iptables
     libreoffice
     lsof
     mpv
+    sops
     tcpdump
     transmission_4-qt
     vlc

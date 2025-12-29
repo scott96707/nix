@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, osConfig, ... }:
 
 {
   # 1. Install Delta (The modern diff tool)
@@ -7,10 +7,11 @@
   programs.git = {
     enable = true;
 
+    includes = [
+      { path = osConfig.sops.templates."git-user.conf".path; }
+    ];
+
     settings = {
-      # Set user and email manually
-      # git config --global user.name "Your Name"
-      # git config --global user.email "you@example.com"
       aliases = {
         co = "checkout";
         ci = "commit";
