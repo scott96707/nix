@@ -59,7 +59,7 @@
   fileSystems."/drives/mule" = {
     device = "/dev/disk/by-label/Mule";
     fsType = "ntfs3";
-    options = [ "nofail" "uid=1000" "gid=100" ];
+    options = [ "nofail" "uid=1000" "gid=100" "x-systemd.automount" "x-systemd.idle-timeout=1min" ];
   };
 
   # --- NETWORKING ---
@@ -180,11 +180,15 @@
         # Mac Compatibility
         "fruit:metadata" = "stream";
         "fruit:model" = "MacSamba";
+        "vfs objects" = "catia fruit streams_xattr";
         "fruit:posix_rename" = "yes";
         "fruit:veto_appledouble" = "no";
         "fruit:nfs_aces" = "no";
         "fruit:wipe_intentionally_left_blank_rfork" = "yes";
         "fruit:delete_empty_adfiles" = "yes";
+
+        # ExFAT compatibility
+        "fruit:resource" = "file";
       };
       
       "mule" = {

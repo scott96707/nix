@@ -7,10 +7,11 @@
 
   # Shared Modules
   imports = [
-    ./../../modules/wezterm.nix
     ./../../modules/git.nix
     ./../../modules/neovim.nix
     ./../../modules/shell.nix
+    ./../../modules/vscode.nix
+    ./../../modules/wezterm.nix
   ];
 
   # macOS Specific session variables
