@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
   # Machine-specific identity
@@ -7,11 +7,13 @@
 
   # Shared Modules
   imports = [
-    ./../../modules/git.nix
+    ./../../modules/git_mac.nix
     ./../../modules/neovim.nix
     ./../../modules/shell.nix
     ./../../modules/vscode.nix
     ./../../modules/wezterm.nix
+
+    inputs.sops-nix.homeManagerModules.sops
   ];
 
   # macOS Specific session variables
@@ -47,5 +49,23 @@
       KeepAlive = false;     # Don't restart it if I quit it manually
       ProcessType = "Interactive";
     };
+  };
+
+  # SOPS configuration
+  sops = {
+    defaultSopsFile = ./../../secrets/secrets.yaml;
+    defaultSopsFormat = "yaml";
+    
+    age.keyFile = "/Users/work_machine/.config/sops/age/keys.txt";
+
+    secrets.git-name = {};
+    secrets.git-email = {};
+
+    # This creates the file at ~/.config/sops-nix/secrets/templates/git-user.conf
+    templates."git-user.conf".content = ''
+      [user]
+        name = ${config.sops.placeholder.git-name}
+        email = ${config.sops.placeholder.git-email}
+    '';
   };
 }

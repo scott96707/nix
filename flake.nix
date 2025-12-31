@@ -43,11 +43,12 @@
         ./hosts/macbook/configuration.nix
         home-manager.darwinModules.home-manager
         {
+          home-manager.extraSpecialArgs = { inherit inputs; };
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.work_machine = import ./hosts/macbook/home.nix;
         }
-        sops-nix.nixosModules.sops
+        sops-nix.darwinModules.sops
       ];
     };
   };
