@@ -125,10 +125,16 @@
         "${pkgs.coreutils}/bin/mkdir -p /home/home/mnt/google_secret"
       ]; 
       ExecStart = ''
-        ${pkgs.rclone}/bin/rclone mount secret: /home/home/mnt/google_secret \
-          --config=/home/home/.config/rclone/rclone.conf \
-          --vfs-cache-mode full \
-          --allow-non-empty
+      ${pkgs.rclone}/bin/rclone mount secret: /home/home/mnt/google_secret \
+        --config=/home/home/.config/rclone/rclone.conf \
+        --vfs-cache-mode full \
+        --vfs-cache-max-size 50G \
+        --dir-cache-time 1000h \
+        --attr-timeout 1000h \
+        --buffer-size 64M \
+        --vfs-read-chunk-size 32M \
+        --no-modtime \
+        --vfs-cache-max-age 24h
       '';
       ExecStop = "/run/wrappers/bin/fusermount -u /home/home/mnt/google_secret";
       Restart = "on-failure";
