@@ -92,6 +92,15 @@
   services.desktopManager.gnome.enable = true;
   services.xserver.xkb = { layout = "us"; variant = ""; };
 
+  # This prevents the machine from going to sleep
+  systemd.targets.sleep.enable = false;
+  systemd.targets.suspend.enable = false;
+  systemd.targets.hibernate.enable = false;
+  systemd.targets.hybrid-sleep.enable = false;
+
+  # Prevent Gnome from trying to suspend on its own
+  services.xserver.displayManager.gdm.autoSuspend = false;
+
   # Auto Login
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "home";
