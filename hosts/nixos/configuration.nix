@@ -4,7 +4,7 @@
   imports =
     [
       ./hardware-configuration.nix
-      ../../modules/common.nix
+      ../../modules/common/common.nix
     ];
 
   # --- BOOT & KERNEL ---

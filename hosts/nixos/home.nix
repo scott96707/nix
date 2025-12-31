@@ -9,12 +9,12 @@
 
   # Shared Modules
   imports = [
-    ./../../modules/firefox.nix
-    ./../../modules/git.nix
-    ./../../modules/neovim.nix
-    ./../../modules/shell.nix
-    ./../../modules/vscode.nix
-    ./../../modules/wezterm.nix
+    ./../../modules/nixos/firefox.nix
+    ./../../modules/nixos/git.nix
+    ./../../modules/common/neovim.nix
+    ./../../modules/common/shell.nix
+    ./../../modules/common/vscode.nix
+    ./../../modules/common/wezterm.nix
   ];
 
   home.sessionVariables = {

@@ -9,12 +9,12 @@
       
       # 1. Official Extensions
       extensions = with pkgs.vscode-extensions; [
-        ms-python.python
-        ms-toolsai.jupyter
-        ms-azuretools.vscode-docker
-        oderwat.indent-rainbow
         bbenoist.nix
         eamodio.gitlens
+        ms-azuretools.vscode-docker
+        ms-python.python
+        ms-toolsai.jupyter
+        oderwat.indent-rainbow
       ] 
       # 2. Marketplace Extensions
       ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
