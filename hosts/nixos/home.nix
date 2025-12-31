@@ -18,10 +18,9 @@
   ];
 
   home.sessionVariables = {
-    EDITOR = "nvim";
     VISUAL = "nvim";
     BROWSER = "firefox";
-    SOPS_AGE_KEY_FILE = "/var/lib/sops-nix/key.txt";
+    SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
   };
 
   home.packages = with pkgs; [
