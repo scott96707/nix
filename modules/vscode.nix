@@ -12,7 +12,9 @@
         ms-python.python
         ms-toolsai.jupyter
         ms-azuretools.vscode-docker
+        oderwat.indent-rainbow
         bbenoist.nix
+        eamodio.gitlens
       ] 
       # 2. Marketplace Extensions
       ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
