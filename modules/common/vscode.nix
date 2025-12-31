@@ -6,8 +6,7 @@
     package = pkgs.vscode;
 
     profiles.default = {
-      
-      # 1. Official Extensions
+      # Official Extensions in pkgs.vscode-extensions
       extensions = with pkgs.vscode-extensions; [
         bbenoist.nix
         eamodio.gitlens
@@ -16,13 +15,19 @@
         ms-toolsai.jupyter
         oderwat.indent-rainbow
       ] 
-      # 2. Marketplace Extensions
+      # Marketplace Extensions not packaged in pkgs.vscode-extensions
       ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
         {
           name = "vscode-edit-csv";
           publisher = "janisdd";
           version = "0.8.2";
           sha256 = "sha256-DbAGQnizAzvpITtPwG4BHflUwBUrmOWCO7hRDOr/YWQ=";
+        }
+        {
+          name = "chatgpt";
+          publisher = "openai";
+          version = "0.5.56";
+          sha256 = "sha256-FAy2Cf2XnOnctBBATloXz8y4cLNHBoXAVnlw42CQzN8=";
         }
       ];
 

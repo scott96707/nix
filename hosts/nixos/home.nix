@@ -21,6 +21,7 @@
     EDITOR = "nvim";
     VISUAL = "nvim";
     BROWSER = "firefox";
+    SOPS_AGE_KEY_FILE = "/var/lib/sops-nix/key.txt";
   };
 
   home.packages = with pkgs; [
