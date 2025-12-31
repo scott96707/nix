@@ -7,11 +7,11 @@
 
   # Shared Modules
   imports = [
-    ./../../modules/git_mac.nix
-    ./../../modules/neovim.nix
-    ./../../modules/shell.nix
-    ./../../modules/vscode.nix
-    ./../../modules/wezterm.nix
+    ./../../modules/macbook/git.nix
+    ./../../modules/common/neovim.nix
+    ./../../modules/common/shell.nix
+    ./../../modules/common/vscode.nix
+    ./../../modules/common/wezterm.nix
 
     inputs.sops-nix.homeManagerModules.sops
   ];

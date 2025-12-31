@@ -9,7 +9,6 @@
   nix.settings.auto-optimise-store = lib.mkIf pkgs.stdenv.isLinux true;
 
   # --- GARBAGE COLLECTION ---
-  # We use the // operator to merge the base config with OS-specific attributes
   nix.gc = {
     automatic = true;
     options = "--delete-older-than 7d";

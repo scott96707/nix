@@ -1,7 +1,7 @@
 { pkgs, config, ... }: {
 
   imports = [
-    ./../../modules/common.nix
+    ./../../modules/common/common.nix
   ];
 
   # --- System Identity ---
