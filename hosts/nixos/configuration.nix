@@ -177,6 +177,7 @@
     isNormalUser = true;
     description = "home";
     extraGroups = [ "networkmanager" "wheel" ];
+    shell = pkgs.zsh;
     packages = with pkgs; [];
   };
 
@@ -194,6 +195,8 @@
   ];
 
   # --- PROGRAMS ---
+  programs.zsh.enable = true;
+
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
