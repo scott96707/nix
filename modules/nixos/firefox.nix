@@ -6,6 +6,32 @@
     
     package = pkgs.firefox;
 
+    # ---------------------------
+    # ENFORCED POLICIES
+    # ---------------------------
+    policies = {
+      DisableFirefoxStudies = true;
+      DisableTelemetry = true;
+
+      FirefoxSuggest = {
+        WebSuggestions = false;
+        SponsoredSuggestions = false;
+        ImproveSuggest = false;
+      };
+
+      Preferences = {
+        "browser.urlbar.suggest.searches" = false;
+        "browser.urlbar.suggest.quicksuggest" = false;
+        "browser.urlbar.suggest.quicksuggest.sponsored" = false;
+        "browser.urlbar.suggest.quicksuggest.nonsponsored" = false;
+        "browser.newtabpage.activity-stream.showSponsored" = false;
+        "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+      };
+    };
+
+    # ---------------------------
+    # USER PROFILE SETTINGS
+    # ---------------------------
     profiles.default = {
       id = 0;
       name = "default";
