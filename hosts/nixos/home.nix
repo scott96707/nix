@@ -56,9 +56,6 @@
     pbpaste = "wl-paste";
   };
 
-  # IMPORTANT: This must be true for home-manager to write to bashrc
-  programs.bash.enable = true; 
-
   programs.readline = {
     enable = true;
     extraConfig = ''
