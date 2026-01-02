@@ -4,6 +4,7 @@ This repository contains the **Infrastructure as Code (IaC)** for my personal wo
 
 It is designed to provide a reproducible **Engineering environment**, featuring a unified terminal experience, consistent keybindings, and automated state management.
 
+---
 ## 🏗 Architecture
 
 The configuration is organized into a modular structure:
@@ -26,6 +27,7 @@ The configuration is organized into a modular structure:
 └── secrets/                # SOPS-managed encrypted secrets
 ```
 
+---
 ## 🚀 Features
 
 * **OS Management**: Fully declarative system state. If I wipe a machine, this repo restores it 100%.
@@ -39,7 +41,26 @@ The configuration is organized into a modular structure:
 * **Networking**: Samba (SMB) configuration optimized for macOS interoperability and Avahi (Bonjour) discovery.
 
 ---
+## 🐧 Installation on NixOS (Linux)
 
+1. **Partition & Install**: Minimal install with user `home`.
+2. **Clone & Setup**:
+```bash
+git clone [https://github.com/scott96707/nixos-config](https://github.com/scott96707/nixos-config) ~/nixos-config
+
+```
+3. **Hardware Config**: Copy `/etc/nixos/hardware-configuration.nix` into `~/nixos-config/hosts/nixos/`.
+4. **Secrets**: Ensure your `key.txt` is in `/var/lib/sops-nix/`.
+5. **Apply**: `sudo nixos-rebuild switch --flake ~/nixos-config#nixos`
+
+
+## 🍎 Installation on macOS
+
+1. **Install Nix**: Via [Determinate Systems](https://install.determinate.systems/nix).
+2. **Enable Flakes**: Add `experimental-features = nix-command flakes` to `~/.config/nix/nix.conf`.
+3. **Apply**: `nix run nix-darwin -- switch --flake ~/nixos
+
+---
 ## 🔐 Secrets & Bootstrap (SOPS)
 
 This configuration uses [sops-nix](https://github.com/Mic92/sops-nix) for secret management.
@@ -51,7 +72,6 @@ Before applying a configuration for the first time, you must manually place your
 If this file is missing, the `rebuild` command will fail to evaluate.
 
 ---
-
 ## 🛠 Usage & Cheatsheet
 
 ### The `rebuild` Command
@@ -63,16 +83,12 @@ This config installs a universal alias called `rebuild` that automatically detec
 rebuild
 
 ```
-
-
 * **Update System (Fetch latest packages):**
 ```bash
 nix flake update
 rebuild
 
 ```
-
-
 
 ### Storage Maintenance
 
@@ -92,27 +108,3 @@ For large data transfers where the VFS mount is not ideal:
 nix shell nixpkgs#rclone --command rclone sync -P /local/path secret:
 
 ```
-
----
-
-## 🐧 Installation on NixOS (Linux)
-
-1. **Partition & Install**: Minimal install with user `home`.
-2. **Clone & Setup**:
-```bash
-git clone [https://github.com/scott96707/nixos-config](https://github.com/scott96707/nixos-config) ~/nixos-config
-
-```
-
-
-3. **Hardware Config**: Copy `/etc/nixos/hardware-configuration.nix` into `~/nixos-config/hosts/nixos/`.
-4. **Secrets**: Ensure your `key.txt` is in `/var/lib/sops-nix/`.
-5. **Apply**: `sudo nixos-rebuild switch --flake ~/nixos-config#nixos`
-
----
-
-## 🍎 Installation on macOS
-
-1. **Install Nix**: Via [Determinate Systems](https://install.determinate.systems/nix).
-2. **Enable Flakes**: Add `experimental-features = nix-command flakes` to `~/.config/nix/nix.conf`.
-3. **Apply**: `nix run nix-darwin -- switch --flake ~/nixos-config#macbook`
