@@ -1,4 +1,3 @@
-```markdown
 # Declarative Infrastructure (NixOS & macOS)
 
 This repository contains the **Infrastructure as Code (IaC)** for my personal workstations. It uses [Nix Flakes](https://nixos.wiki/wiki/Flakes) to share configurations, development tools, and dotfiles between a **NixOS Desktop** (Linux/AMD GPU) and a **MacBook** (macOS/Intel).
@@ -9,7 +8,7 @@ It is designed to provide a reproducible **Engineering environment**, featuring 
 
 The configuration is organized into a modular structure:
 
-```text
+```markdown
 ├── flake.nix               # Entry point & dependency pinning (Nixpkgs 25.11)
 ├── flake.lock              # Exact package version lockfile
 ├── hosts/                  # Machine-specific configurations
@@ -25,7 +24,6 @@ The configuration is organized into a modular structure:
 │   ├── macbook/            # macOS-only (Git identity)
 │   └── nixos/              # Linux-only (Firefox, GPU-specific Git)
 └── secrets/                # SOPS-managed encrypted secrets
-
 ```
 
 ## 🚀 Features
