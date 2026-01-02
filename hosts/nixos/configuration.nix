@@ -53,13 +53,33 @@
   fileSystems."/drives/aming" = {
     device = "/dev/disk/by-uuid/60F8ABD5F8ABA7AC";
     fsType = "ntfs3";
-    options = [ "nofail" "uid=1000" "gid=100" ];
+    options = [ 
+      "defaults"
+      "nofail" 
+      "uid=1000" 
+      "gid=100" 
+      "noauto"                     # Don't try to mount at boot
+      "x-systemd.automount"        # Mount on access
+      "x-systemd.idle-timeout=1min" # Unmount after 1 min of inactivity
+      "x-systemd.device-timeout=5s" # If the label 'Mule' isn't found in 5s, stop trying
+    ];
   };
 
   fileSystems."/drives/mule" = {
-    device = "/dev/disk/by-label/Mule";
+    device = "/dev/disk/by-uuid/F81EE57C1EE533F2";
     fsType = "ntfs3";
-    options = [ "nofail" "uid=1000" "gid=100" "x-systemd.automount" "x-systemd.idle-timeout=1min" ];
+    options = [ 
+      "defaults"
+      "nofail" 
+      "uid=1000" 
+      "gid=100" 
+      "noauto"
+      "x-systemd.automount"
+      "x-systemd.device-timeout=5s"
+      "x-systemd.idle-timeout=1min"
+      "errors=continue"     # Don't panic the kernel if metadata is weird
+      "prele"               # Pre-read lead-in (helps ntfs3 stability)
+    ];
   };
 
   # --- NETWORKING ---
@@ -99,7 +119,7 @@
   systemd.targets.hybrid-sleep.enable = false;
 
   # Prevent Gnome from trying to suspend on its own
-  services.xserver.displayManager.gdm.autoSuspend = false;
+  services.displayManager.gdm.autoSuspend = false;
 
   # Auto Login
   services.displayManager.autoLogin.enable = true;
@@ -214,6 +234,7 @@
         "create mask" = "0644";
         "directory mask" = "0755";
         "force user" = "home";
+        "vfs objects" = "catia fruit streams_xattr";
       };
     };
   };

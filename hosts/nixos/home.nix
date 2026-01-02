@@ -48,6 +48,7 @@
   };
 
   home.shellAliases = {
+    fix-mule="sudo umount -l /drives/mule && sudo ntfsfix -d /dev/disk/by-uuid/F81EE57C1EE533F2";
     rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config/#nixos";
     cleanup = "sudo nix-collect-garbage -d"; 
     sunvim = "sudo -E nvim"; 
