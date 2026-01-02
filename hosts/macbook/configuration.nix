@@ -1,4 +1,5 @@
-{ pkgs, config, ... }: {
+{ pkgs, config, ... }:
+{
 
   imports = [
     ./../../modules/common/common.nix
@@ -16,16 +17,19 @@
   environment.systemPackages = with pkgs; [
     mkalias
     coreutils
+    nixd
+    nixfmt
   ];
 
   # Script to pickup apps Nix installs and place them in /Applications/Nix so that they're easy to find
-  system.activationScripts.applications.text = let
-    env = pkgs.buildEnv {
-      name = "system-applications";
-      paths = config.environment.systemPackages;
-      pathsToLink = [ "/Applications" ];
-    };
-  in
+  system.activationScripts.applications.text =
+    let
+      env = pkgs.buildEnv {
+        name = "system-applications";
+        paths = config.environment.systemPackages;
+        pathsToLink = [ "/Applications" ];
+      };
+    in
     pkgs.lib.mkForce ''
       # 1. Clean up
       echo "setting up /Applications..." >&2
@@ -47,22 +51,22 @@
 
       # 3. Link Home Manager Packages
       HM_APPS="/Users/work_machine/Applications/Home Manager Apps"
-      
+
       if [ -d "$HM_APPS" ]; then
-         for app in "$HM_APPS/"*; do
-           if [ -e "$app" ]; then
-             app_name=$(basename "$app")
-             # Only alias if it doesn't already exist
-             if [ ! -e "/Applications/Nix Apps/$app_name" ]; then
-               real_path=$(${pkgs.coreutils}/bin/readlink -f "$app")
-               echo "Linking HM App: $app_name -> $real_path" >&2
-               ${pkgs.mkalias}/bin/mkalias "$real_path" "/Applications/Nix Apps/$app_name"
-             fi
-           fi
-         done
+        for app in "$HM_APPS/"*; do
+          if [ -e "$app" ]; then
+            app_name=$(basename "$app")
+            # Only alias if it doesn't already exist
+            if [ ! -e "/Applications/Nix Apps/$app_name" ]; then
+              real_path=$(${pkgs.coreutils}/bin/readlink -f "$app")
+              echo "Linking HM App: $app_name -> $real_path" >&2
+              ${pkgs.mkalias}/bin/mkalias "$real_path" "/Applications/Nix Apps/$app_name"
+            fi
+          fi
+        done
       fi
     '';
-  
+
   # Must install homebrew manually on MacOS before using and modules:
   # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   homebrew = {
@@ -82,7 +86,7 @@
 
   home-manager = {
     # This tells Home Manager: "If a file exists, back it up to 'filename.backup' and proceed"
-    backupFileExtension = "backup"; 
+    backupFileExtension = "backup";
   };
 
   # --- macOS Defaults ---
@@ -92,7 +96,7 @@
     dock = {
       autohide = true;
       show-recents = false; # Clean up the dock
-      mru-spaces = false;   # Stop macOS from rearranging your Spaces/Desktops
+      mru-spaces = false; # Stop macOS from rearranging your Spaces/Desktops
       orientation = "bottom";
       tilesize = 64;
     };
@@ -122,12 +126,12 @@
       # Set to false to show the menu bar at all times
       # Set to true if you ever want it to autohide
       _HIHideMenuBar = false;
-      KeyRepeat = 2;         # Fast key repeat
+      KeyRepeat = 2; # Fast key repeat
       "com.apple.mouse.tapBehavior" = 1; # Enable tap-to-click
       AppleInterfaceStyle = "Dark"; # Force Dark Mode
 
     };
-    
+
     # Login and Security
     loginwindow.GuestEnabled = false;
   };
@@ -135,7 +139,7 @@
   # --- Nix Core Settings ---
   nixpkgs.config.allowUnfree = true;
   nix.optimise.automatic = true;
-  
+
   # The GID fix for this specific Intel Mac
   ids.gids.nixbld = 350;
 

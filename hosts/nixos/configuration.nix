@@ -188,7 +188,9 @@
     age
     efitools
     exiftool
-    mesa 
+    mesa
+    nixd
+    nixfmt
     rclone
     sops
     vulkan-tools
