@@ -1,120 +1,56 @@
+```markdown
 # Declarative Infrastructure (NixOS & macOS)
 
 This repository contains the **Infrastructure as Code (IaC)** for my personal workstations. It uses [Nix Flakes](https://nixos.wiki/wiki/Flakes) to share configurations, development tools, and dotfiles between a **NixOS Desktop** (Linux/AMD GPU) and a **MacBook** (macOS/Intel).
 
-It is designed to provide a reproducible **Engineering environment**, featuring a unified terminal experience, consistent keybindings, and automated system state management.
-
-Here's a good website to - [Learn Nix](https://docs.determinate.systems/guides/learn-nix/)
+It is designed to provide a reproducible **Engineering environment**, featuring a unified terminal experience, consistent keybindings, and automated state management.
 
 ## 🏗 Architecture
 
 The configuration is organized into a modular structure:
 
 ```text
-├── flake.nix             # Entry point & dependency pinning (Nixpkgs 25.11)
-├── flake.lock            # Exact package version lockfile
-├── hosts/                # Machine-specific configurations
-│   ├── nixos/            # Linux Desktop (GNOME/Wayland + AMD ROCm)
-│   └── macbook/          # macOS Laptop (nix-darwin)
-├── modules/              # Shared configurations
-│   ├── common.nix        # Packages common to both OSs (Git, Ripper, etc.)
-│   ├── neovim.nix        # Lua-based Neovim setup (LSP, Treesitter, Themes)
-│   ├── wezterm.nix       # GPU-accelerated terminal config
-│   ├── git.nix           # Git identity & SSH signing
-│   └── shell.nix         # Zsh, Starship, and aliases
+├── flake.nix               # Entry point & dependency pinning (Nixpkgs 25.11)
+├── flake.lock              # Exact package version lockfile
+├── hosts/                  # Machine-specific configurations
+│   ├── macbook/            # macOS Laptop (nix-darwin)
+│   │   ├── configuration.nix
+│   │   └── home.nix
+│   └── nixos/              # Linux Desktop (GNOME/Wayland + AMD ROCm)
+│       ├── configuration.nix
+│       ├── hardware-configuration.nix
+│       └── home.nix
+├── modules/                # Modular logic blocks
+│   ├── common/             # Shared (NVIM, Shell, WezTerm, VSCode)
+│   ├── macbook/            # macOS-only (Git identity)
+│   └── nixos/              # Linux-only (Firefox, GPU-specific Git)
+└── secrets/                # SOPS-managed encrypted secrets
 
 ```
 
 ## 🚀 Features
 
 * **OS Management**: Fully declarative system state. If I wipe a machine, this repo restores it 100%.
+* **Hybrid Storage**:
+* **Cloud**: Encrypted Google Drive via Rclone VFS with optimized caching.
+* **Local**: Automated, "self-healing" NTFS mounts for internal storage (The "Mule") with `systemd.automount`.
+
+
 * **Terminal**: [WezTerm](https://wezfurlong.org/wezterm/) configured with **JetBrains Mono** and **Catppuccin** themes.
-* **Editor**: [Neovim](https://neovim.io/) with a custom Lua configuration, managing plugins via Nix.
-* **Shell**: Zsh with [Starship](https://starship.rs/) prompt and [Direnv](https://direnv.net/) integration.
-* **Linux**: Kernel pinned for AMD GPU support (`amdgpu`), ROCm, and hardware acceleration.
-* **macOS**: System-level UI tweaks (opaque menu bar), Homebrew integration, and window management via Rectangle.
-
-
+* **Editor**: [VS Code](https://code.visualstudio.com/) and [Neovim](https://neovim.io/) with custom Nix-managed configurations.
+* **Networking**: Samba (SMB) configuration optimized for macOS interoperability and Avahi (Bonjour) discovery.
 
 ---
 
-## 🍎 Installation on macOS
+## 🔐 Secrets & Bootstrap (SOPS)
 
-**Prerequisites:** A fresh install of macOS (Sonoma/Sequoia).
+This configuration uses [sops-nix](https://github.com/Mic92/sops-nix) for secret management.
 
-### 1. Install Nix
+**Mandatory Requirement:**
+Before applying a configuration for the first time, you must manually place your decryption key at the following location:
+` /var/lib/sops-nix/key.txt`
 
-The [Determinate Nix Installer](https://github.com/DeterminateSystems/nix-installer) is the easiest installation method.
-
-```bash
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
-
-# Check installation to verify installation
-nix --version
-```
-
-### 2. Enable Flakes
-
-Edit your global Nix config to enable the modern command set:
-
-```bash
-mkdir -p ~/.config/nix
-echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
-
-```
-
-### 3. Bootstrap
-
-Clone this repo and apply the configuration. Nix-Darwin will take over system management from here.
-
-```bash
-# Clone the repo
-git clone https://github.com/scott96707/nixos-config ~/nixos-config
-
-# Build and Switch
-# Note: "macbook" matches the name in flake.nix
-nix run nix-darwin -- switch --flake ~/nixos-config#macbook
-
-```
-
----
-
-## 🐧 Installation on NixOS (Linux)
-
-**Prerequisites:** Boot the machine with the [NixOS 25.11 ISO](https://nixos.org/download.html).
-
-### 1. Partition & Install Minimal OS
-
-Perform a standard graphical or manual install. When prompted for a user, use `home` (or update `hosts/nixos/configuration.nix` to match your chosen username).
-
-### 2. Preserve Hardware Config
-
-NixOS generates a unique `hardware-configuration.nix` for your specific drives and CPU.
-
-```bash
-# Back up the generated hardware config
-cp /etc/nixos/hardware-configuration.nix ~/hardware-configuration.nix.bak
-
-```
-
-### 3. Clone & Setup
-
-```bash
-# Clone the repo
-git clone https://github.com/scott96707/nixos-config ~/nixos-config
-
-# Copy your hardware config into the host directory
-cp /etc/nixos/hardware-configuration.nix ~/nixos-config/hosts/nixos/
-git add ~/nixos-config/hosts/nixos/hardware-configuration.nix
-
-```
-
-### 4. Apply Configuration
-
-```bash
-sudo nixos-rebuild switch --flake ~/nixos-config#nixos
-
-```
+If this file is missing, the `rebuild` command will fail to evaluate.
 
 ---
 
@@ -139,25 +75,46 @@ rebuild
 ```
 
 
-* **Clean Garbage (Free up disk space):**
-```bash
-# Removes old generations older than 7 days
-sudo nix-collect-garbage -d
 
-```
+### Storage Maintenance
 
-
-
-## 🔐 Secrets & Signing
-
-This configuration expects an SSH key at `~/.ssh/id_ed25519` for Git commit signing.
+If the internal **Mule** drive becomes unreachable or "dirty" due to a hard reset:
 
 ```bash
-# Generate key if missing
-ssh-keygen -t ed25519 -C "your_email@example.com"
+# Force repair the NTFS metadata
+sudo ntfsfix -d /dev/disk/by-label/Mule
 
 ```
 
-```
+### Manual Cloud Sync
+
+For large data transfers where the VFS mount is not ideal:
+
+```bash
+nix shell nixpkgs#rclone --command rclone sync -P /local/path secret:
 
 ```
+
+---
+
+## 🐧 Installation on NixOS (Linux)
+
+1. **Partition & Install**: Minimal install with user `home`.
+2. **Clone & Setup**:
+```bash
+git clone [https://github.com/scott96707/nixos-config](https://github.com/scott96707/nixos-config) ~/nixos-config
+
+```
+
+
+3. **Hardware Config**: Copy `/etc/nixos/hardware-configuration.nix` into `~/nixos-config/hosts/nixos/`.
+4. **Secrets**: Ensure your `key.txt` is in `/var/lib/sops-nix/`.
+5. **Apply**: `sudo nixos-rebuild switch --flake ~/nixos-config#nixos`
+
+---
+
+## 🍎 Installation on macOS
+
+1. **Install Nix**: Via [Determinate Systems](https://install.determinate.systems/nix).
+2. **Enable Flakes**: Add `experimental-features = nix-command flakes` to `~/.config/nix/nix.conf`.
+3. **Apply**: `nix run nix-darwin -- switch --flake ~/nixos-config#macbook`
