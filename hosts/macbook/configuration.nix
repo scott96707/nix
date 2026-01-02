@@ -75,6 +75,7 @@
     casks = [
       # Firefox cannot be managed through Nix. If you try, it will overwrite your Firefox profile every time you rebuild
       "firefox"
+      "macfuse"
       "rectangle"
     ];
   };
