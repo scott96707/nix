@@ -21,6 +21,16 @@
     nixfmt
   ];
 
+  nix.settings = {
+    # Change Nix download buffer size. I was getting errors about this.
+    # Increase to 268435456 (256MB) if this is still too small.
+    download-buffer-size = 134217728; # 128 MB
+    # Allow Nix to run a build job for each of the computer's cores.
+    max-jobs = "auto";
+    # Remove limit on how many CPU cores each individual build job can use.
+    cores = 0;
+  };
+
   # Script to pickup apps Nix installs and place them in /Applications/Nix so that they're easy to find
   system.activationScripts.applications.text =
     let
